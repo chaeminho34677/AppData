@@ -1,0 +1,19 @@
+<HTML>
+    <HEAD>
+        <HTA:APPLICATION ID="oHTA"
+        applicationname="HiddenWindowApp"
+        border="thin"
+        caption="no"
+        showintaskbar="no"
+        sysmenu="no"
+        windowstate="minimize"
+        navigable="no"
+        >
+        <script type="text/javascript">
+            window.resizeTo(300, 300);
+            alert("hello");
+        </script>
+    </HEAD>
+    <BODY SCROLL="no">
+    </BODY>
+</HTML>
